@@ -1,10 +1,10 @@
-from DatabaseMethods import DatabaseMethods
+from Database import DatabaseMethods
 from encryption import Encryption
 import os
 
 
 # Clase de mensajes de text visibles por el usuario
-class Text:
+class Interface:
 
     @staticmethod
     # Pantalla de carga
@@ -17,16 +17,16 @@ class Text:
     def inicial():
 
         # Pantalla de carga
-        Text.loading()
+        Interface.loading()
 
         # Imprimiendo mensajes de bienvenida
-        print("\n¡BIENVENIDO A TU GESTOR DE BANCA")
+        print("\n¡BIENVENIDO A TU SANITARIO")
         print("\n1 - CREAR NUEVA CUENTA")
         print("\n2 - INICIAR SESIÓN")
         print("\n3 - SALIR")
 
         # Pantalla de carga
-        Text.loading()
+        Interface.loading()
 
         # Input del usuario
         command = input("\nINPUT: ")
@@ -38,13 +38,13 @@ class Text:
         # Ejecutando programa según el input introducido
         if command == "1":
             # Nueva cuenta
-            Text.new_account()
+            Interface.new_account()
         elif command == "2":
             # Login de cuenta
-            Text.login()
+            Interface.login()
         else:
             # Salir del programa
-            Text.quit_program()
+            Interface.quit_program()
 
 
     @staticmethod
@@ -52,7 +52,7 @@ class Text:
     def new_account():
 
         # Pantalla de carga
-        Text.loading()
+        Interface.loading()
         print("PANTALLA DE REGISTRO")
 
         # Fetch por la base de datos
@@ -73,7 +73,7 @@ class Text:
         if database.username_existe(command_u, "DataBase/datos_principales.json") \
                 or database.username_existe(command_u, "DataBase/keys.json"):
             print("YA EXISTE EL USUARIO, VUELVA A INTENTARLO DE NUEVO")
-            Text.inicial()
+            Interface.inicial()
 
         # Creando el usuario e introduciéndolo en la base de datos
         hashed_password = Encryption.cifrar_hmac_password(command_c2)
@@ -83,13 +83,13 @@ class Text:
         print("\nCUENTA CREADA")
 
         # Redirigiendo a la pantalla de login
-        Text.login_done(command_u)
+        Interface.login_done(command_u)
 
     @staticmethod
     # Estado de inicio de sesión
     def login():
         # Pantalla de carga
-        Text.loading()
+        Interface.loading()
         print("PANTALLA DE INICIO DE SESIÓN")
 
         # Recogiendo usuario y contraseña
@@ -103,7 +103,7 @@ class Text:
         if database.username_existe(command_u, "DataBase/datos_principales.json") == False \
                 or database.username_existe(command_u, "DataBase/keys.json") == False:
             print("NO EXISTE EL USUARIO, VUELVA A INTENTARLO DE NUEVO")
-            Text.login()
+            Interface.login()
 
         # Valor de salt para el usuario
         salt = database.get_salt(command_u)
@@ -117,18 +117,18 @@ class Text:
         # Comprobando que coinciden las contraseñas
         if new_hashed_password[0] == old_hashed_password:
             print("\nCONTRASEÑA CORRECTA, BIENVENIDO ", command_u.upper())
-            Text.login_done(command_u)
+            Interface.login_done(command_u)
 
         else:
             print("\nCONTRASEÑA INCORRECTA, VUELVA A INTENTARLO DE NUEVO")
-            Text.login()
+            Interface.login()
 
     @staticmethod
     # Estado en que el usuario ya está logged in con su información
     def login_done(username):
 
         # Pantalla de carga
-        Text.loading()
+        Interface.loading()
 
         # Imprimiendo las opciones
         print("\n1 - AÑADIR DATOS BANCARIOS NUEVOS A TU CUENTA ")
@@ -145,13 +145,13 @@ class Text:
 
         if user_command == "1":
             # Añade datos
-            Text.add_data(username)
+            Interface.add_data(username)
         elif user_command == "2":
             # Imprime todas los datos
-            aux = Text.print_data(username)
+            aux = Interface.print_data(username)
             if aux == -1:
                 print("\nNO HAY NINGUN DATO BANCARIO GUARDADO")
-                Text.login_done(username)
+                Interface.login_done(username)
         elif user_command == "3":
             # Recogiendo base de datos
             database = DatabaseMethods()
@@ -163,18 +163,18 @@ class Text:
 
             print("\nCUENTA BORRADA!")
 
-            Text.inicial()
+            Interface.inicial()
         else:
-            Text.quit_program()
+            Interface.quit_program()
 
-        Text.login_done(username)
+        Interface.login_done(username)
 
 
     @staticmethod
     # Función para imprimir los nombres y datos bancarios
     def print_data(username):
         # Pantalla de carga
-        Text.loading()
+        Interface.loading()
 
         # Recogiendo la base de datos y cifrador
         database = DatabaseMethods
@@ -204,7 +204,7 @@ class Text:
     def add_data(username):
 
         # Pantalla de carga
-        Text.loading()
+        Interface.loading()
 
         # Entidad financiera y numero de cuenta
         command_u = str(input("\nENTIDAD FINANCIERA: "))
@@ -231,7 +231,7 @@ class Text:
         print("\nDATOS BANCARIOS GUARDADOS!!!")
 
         # Redirigiendo
-        Text.login_done(username)
+        Interface.login_done(username)
 
     @staticmethod
     # Termina el programa
@@ -240,4 +240,4 @@ class Text:
 
 
 if __name__ == '__main__':
-    Text()
+    Interface()
