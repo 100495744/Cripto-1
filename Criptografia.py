@@ -1,3 +1,5 @@
+import hashlib
+
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import os
@@ -60,4 +62,13 @@ class Criptadores:
             input_file.close()
             output_file.close()
 
+    def file_comprobation(self,file_path):
+        buffer_size = 65536
+        file_hash = hashlib.sha256()
+        with open(file_path,'rb') as f:
+            fb = f.read(buffer_size)
+            while len(fb) > 0:
+                file_hash.update(fb)
+                fb = f.read(buffer_size)
 
+        return file_hash.hexdigest()
