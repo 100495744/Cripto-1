@@ -1,5 +1,5 @@
 from Database import DatabaseMethods
-from encryption import Encryption
+from Criptografia import Criptadores
 import os
 
 
@@ -76,7 +76,7 @@ class Interface:
             Interface.inicial()
 
         # Creando el usuario e introduciéndolo en la base de datos
-        hashed_password = Encryption.cifrar_hmac_password(command_c2)
+        hashed_password = Criptadores.hash_hmac_password(command_c2)
         database.write_json_datos_principales(command_u, hashed_password[0])
         database.write_json_keys_salt(command_u, hashed_password[1])
 
@@ -109,7 +109,7 @@ class Interface:
         salt = database.get_salt(command_u)
 
         # Cifrando contraseña introducido
-        new_hashed_password = Encryption.cifrar_hmac_password(command_c, bytes.fromhex(salt))
+        new_hashed_password = Criptadores.hash_hmac_password(command_c, bytes.fromhex(salt))
 
         # Recogiendo valor de contraseña en la base de datos
         old_hashed_password = database.get_main_password(command_u)

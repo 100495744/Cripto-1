@@ -1,11 +1,14 @@
 import hashlib
 
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives import hashes, hmac
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import os
 
 class Criptadores:
 
+    @staticmethod
     def file_encription(self, key ):
         #use key in jsons
         buffer_size = 65536
@@ -36,7 +39,7 @@ class Criptadores:
             input_file.close()
             output_file.close()
 
-
+    @staticmethod
     def file_decriptor(self,file_names,key):
         buffer_size = 65536
 
@@ -62,6 +65,7 @@ class Criptadores:
             input_file.close()
             output_file.close()
 
+    @staticmethod
     def file_comprobation(self,file_path):
         buffer_size = 65536
         file_hash = hashlib.sha256()
@@ -72,3 +76,20 @@ class Criptadores:
                 fb = f.read(buffer_size)
 
         return file_hash.hexdigest()
+
+
+    @staticmethod
+    # Cifrado HMAC con SALT
+    def hash_hmac_password(password, salt=os.urandom(8)):
+
+        # Cifrando password con salt
+        h = hmac.HMAC(salt, hashes.SHA256())
+        h.update(str.encode(password))
+        hash_pass = h.finalize()
+
+        # Pasando a hexadecimal
+        hash_pass = hash_pass.hex()
+        salt = salt.hex()
+
+        # Devolviendo valores en hexadecimal de contraseña y salt utilizado en b hexadecimal
+        return hash_pass, salt
