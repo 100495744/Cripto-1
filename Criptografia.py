@@ -80,7 +80,8 @@ class Criptadores:
         return file_hash.hexdigest()
 
 
-    def string_encription(self,string,key, iv):
+    @staticmethod
+    def string_encription(string,key, iv):
         #creamos el encriptador que genera un IV
         cipher_encrypt = AES.new(key, AES.MODE_CFB, iv = iv )
         ciphered_bytes = cipher_encrypt.encrypt(string)
@@ -88,7 +89,8 @@ class Criptadores:
         #devolvemos el dato encriptado y el iv
         return ciphered_bytes
 
-    def string_decript(self,key, iv , string):
+    @staticmethod
+    def string_decript(key, iv , string):
 
         #creamos el encriptador con la key y el iv
         cipher_encrypt = AES.new(key, AES.MODE_CFB, iv=iv)

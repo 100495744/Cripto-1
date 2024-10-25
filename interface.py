@@ -221,7 +221,7 @@ class Interface:
 
         # Cifrando el numero de cuenta con aes
         iv = os.urandom(16)
-        aux = Criptadores.string_encription(command_c, bytes.fromhex(key), )
+        aux = Criptadores.string_encription(command_c, bytes.fromhex(key), iv )
         password_encrypted = aux[0]
 
         # Valor de iv
