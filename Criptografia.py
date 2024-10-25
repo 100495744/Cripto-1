@@ -1,6 +1,8 @@
 import hashlib
 
-
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.backends import default_backend
+import binascii
 from cryptography.hazmat.primitives import hashes, hmac
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
@@ -109,3 +111,15 @@ class Criptadores:
 
         # Devolviendo valores en hexadecimal de contraseña y salt utilizado en b hexadecimal
         return hash_pass, salt
+
+    def generar_clave_derivada(clave_acceso: str, iteraciones=1000, longitud_clave=32):
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=longitud_clave,
+            salt=b'',  # No se utiliza sal
+            iterations=iteraciones,
+            backend=default_backend()
+        )
+        clave_acceso_bytes = clave_acceso.encode('utf-8')
+        clave_derivada = kdf.derive(clave_acceso_bytes)
+        return binascii.hexlify(clave_derivada).decode('utf-8')

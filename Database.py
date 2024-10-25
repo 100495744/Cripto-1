@@ -206,4 +206,25 @@ class DatabaseMethods:
         f.truncate(0)
 
 
+    def borrar_key(username, path):
+        # Abriendo fichero de path
+        f = open(path, "r")
+
+        # Recogiendo base de datos
+        data = json.load(f)
+
+        # Borrando elemento en dict
+        try:
+            del data[username]["key"]
+        except:
+            return -1
+
+        # Insertando cambios
+        with open(path, 'w') as file:
+            json.dump(data, file, indent=4, separators=(',', ': '))
+
+        # Cerrando fichero
+        f.close()
+
+
 DatabaseMethods.is_empty("DataBase/datos_principales.json")
