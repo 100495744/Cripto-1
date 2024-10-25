@@ -84,10 +84,14 @@ class Criptadores:
     def string_encription(string,key, iv):
         #creamos el encriptador que genera un IV
         cipher_encrypt = AES.new(key, AES.MODE_CFB, iv = iv )
-        ciphered_bytes = cipher_encrypt.encrypt(string)
+        texto = string.encode()
+        ciphered_bytes = cipher_encrypt.encrypt(texto)
 
+        ct = ciphered_bytes.hex()
+        iv = iv.hex()
+        key = key.hex()
         #devolvemos el dato encriptado y el iv
-        return ciphered_bytes
+        return ct, iv , key
 
     @staticmethod
     def string_decript(key, iv , string):
@@ -95,6 +99,7 @@ class Criptadores:
         #creamos el encriptador con la key y el iv
         cipher_encrypt = AES.new(key, AES.MODE_CFB, iv=iv)
         decrypted_bytes = cipher_encrypt.decrypt(string)
+
 
         return decrypted_bytes
 
