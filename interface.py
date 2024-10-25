@@ -197,7 +197,7 @@ class Interface:
         index = 1
         for current in database_value:
             print("\n", index, " - ", current, " : "
-                  ,encryption.descifrador_aes(bytes.fromhex(keyA)
+                  ,encryption.string_decript(bytes.fromhex(keyA)
                   ,bytes.fromhex(database_value[current][1])
                   ,bytes.fromhex(database_value[current][0])))
             index += 1
@@ -221,14 +221,13 @@ class Interface:
 
         # Cifrando el numero de cuenta con aes
         iv = os.urandom(16)
-        aux = Criptadores.cifrador_aes(command_c, bytes.fromhex(key), iv)
+        aux = Criptadores.string_encription(command_c, bytes.fromhex(key), )
         password_encrypted = aux[0]
 
         # Valor de iv
         iv = aux[1]
 
         # Añadiendo a la base de datos
-        message = str.encode(str(([str(command_u), str(password_encrypted), str(iv)])))
         database.write_json_datos_secundarios(username, command_u, password_encrypted, iv)
 
         print("\nDATOS BANCARIOS GUARDADOS!!!")
