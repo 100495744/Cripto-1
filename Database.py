@@ -120,7 +120,7 @@ class DatabaseMethods:
 
     @staticmethod
     # Función escribe username y contraseña cifrada en primary
-    def write_json_datos_principales(username, password):
+    def write_json_datos_principales(username, password, key):
         # Abriendo fichero de keys
         f = open("DataBase/datos_principales.json", "r")
 
@@ -130,6 +130,7 @@ class DatabaseMethods:
         # Creando la variable data con lo que necesitamos y lo introducimos
         data[username] = {}
         data[username]["password"] = password
+        data[username]["key"] = key
         with open('DataBase/datos_principales.json', 'w') as file:
             json.dump(data, file, indent=4, separators=(',', ': '))
 
@@ -151,13 +152,6 @@ class DatabaseMethods:
         # Creando la variable data con lo que necesitamos y lo introducimos
         data[username]["salt"] = key
 
-        # Añadiendo padding a la contraseña para que tenga longitud 32 bytes
-        padder = padding.PKCS7(256).padder()
-        keyA_value = padder.update(os.urandom(8))
-        keyA_value += padder.finalize()
-
-        # Insertando a la base de datos
-        data[username]["keyA"] = keyA_value.hex()
 
         # Abriendo el archivo para introducirlo
         with open('DataBase/keys.json', 'w') as file:
@@ -188,6 +182,23 @@ class DatabaseMethods:
 
         # Cerrando fichero
         f.close()
+
+    @staticmethod
+    def write_json_datos_principales_key(username, key):
+        # Abriendo fichero de keys
+        f = open("DataBase/datos_principales.json", "r")
+
+        # Recogiendo base de datos
+        data = json.load(f)
+
+        # Creando la variable data con lo que necesitamos y lo introducimos
+        data[username]["key"] = key
+        with open('DataBase/datos_principales.json', 'w') as file:
+            json.dump(data, file, indent=4, separators=(',', ': '))
+
+        # Cerrando fichero
+        f.close()
+
 
     @staticmethod
     # Función comprueba si está vacío la base de datos

@@ -77,7 +77,7 @@ class Interface:
 
         # Creando el usuario e introduciéndolo en la base de datos
         hashed_password = Criptadores.hash_hmac_password(command_c2)
-        database.write_json_datos_principales(command_u, hashed_password[0])
+        database.write_json_datos_principales(command_u, hashed_password[0], Criptadores.generar_clave_derivada(command_c2))
         database.write_json_keys_salt(command_u, hashed_password[1])
 
         print("\nCUENTA CREADA")
@@ -117,6 +117,7 @@ class Interface:
         # Comprobando que coinciden las contraseñas
         if new_hashed_password[0] == old_hashed_password:
             print("\nCONTRASEÑA CORRECTA, BIENVENIDO ", command_u.upper())
+            database.write_json_datos_principales_key(command_u, Criptadores.generar_clave_derivada(command_c))
             Interface.login_done(command_u)
 
         else:
@@ -168,6 +169,7 @@ class Interface:
 
             Interface.inicial()
         else:
+            DatabaseMethods.borrar_key(username, "DataBase/datos_principales.json")
             Interface.quit_program()
 
         Interface.login_done(username)
