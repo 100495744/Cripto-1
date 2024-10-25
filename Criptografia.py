@@ -11,17 +11,17 @@ import os
 class Criptadores:
 
     @staticmethod
-    def file_encription(self, key ):
+    def file_encription( key ):
         #use key in jsons
         buffer_size = 65536
 
         #Take all the names of files inside the folder
-        file_list = os.listdir('Input_Archivos')
+        file_list = os.listdir('Input_Files')
 
         for in_file in file_list:
 
             #We open de files
-            input_file = open('Input_Archivos/'+ in_file, 'rb')
+            input_file = open('Input_files/'+ in_file, 'rb')
 
             output_file = open( 'Database/EncriptedFiles/' + in_file + '.encrypted', 'wb')
 
@@ -40,15 +40,15 @@ class Criptadores:
 
             input_file.close()
             output_file.close()
-
+            return file_list
     @staticmethod
-    def file_decriptor(self,file_names,key):
+    def file_decriptor(file_names,key):
         buffer_size = 65536
 
         #we open de files
         for elem in file_names:
-            input_file = open('Database/EncriptedFiles/' + elem + '.encrypted','rb')
-            output_file = open('Output_Files/' + elem, 'wb')
+            input_file = open('Database/EncriptedFiles/' + str(elem) + '.encrypted','rb')
+            output_file = open('Output_Files/' + str(elem), 'wb')
 
 
             #leemos el iv que hemos guardado en el archivo

@@ -181,6 +181,35 @@ class DatabaseMethods:
         f.close()
 
     @staticmethod
+    def get_datos_secundarios_file(username):
+        f = open("DataBase/datos_secundarios.json", "r")
+
+        data = json.load(f)
+
+        return data[username]["files"][0]
+
+    @staticmethod
+    def store_files( username, file_list):
+        # Abriendo fichero de keys
+        f = open("DataBase/datos_secundarios.json", "r")
+
+        # Recogiendo base de datos
+        data = json.load(f)
+
+        # Creando la variable data con lo que necesitamos y lo introducimos
+        try:
+            data[username]["files"].extend(file_list)
+        except:
+            data[username]["files"] = file_list
+
+        # Abriendo el archivo para introducirlo
+        with open('DataBase/datos_secundarios.json', 'w') as file:
+            json.dump(data, file, indent=4, separators=(',', ': '))
+
+        # Cerrando fichero
+        f.close()
+
+    @staticmethod
     def write_json_datos_principales_key(username, key):
         # Abriendo fichero de keys
         f = open("DataBase/datos_principales.json", "r")

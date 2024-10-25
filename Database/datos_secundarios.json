@@ -4,5 +4,16 @@
             "d09d7a4628fe",
             "ae81cb312bad2a814941f4148dfc8eb2"
         ]
+    },
+    "ale": {
+        "asdf": [
+            "80ae2c28d13e",
+            "04bfb8aefec5581d3e2a88ac4265fe3a"
+        ],
+        "files": [
+            [
+                "Juegos.js"
+            ]
+        ]
     }
 }

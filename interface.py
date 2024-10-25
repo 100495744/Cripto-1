@@ -132,11 +132,12 @@ class Interface:
         Interface.loading()
 
         # Imprimiendo las opciones
-        print("\n1 - AÑADIR DATOS BANCARIOS NUEVOS A TU CUENTA ")
+        print("\n1 - AÑADIR DATOS DE SEGURO A TU CUENTA ")
         print("\n2 - VER DATOS BANCARIOS ")
-        print("\n3 - VER ARCHIVOS MEDICOS ")
-        print("\n4 - BORRAR CUENTA")
-        print("\n5 - SALIR")
+        print("\n3 - GUARDAR ARCHIVOS MEDICOS ")
+        print("\n4 - RECUPERAR ARCHIVOS MEDIVOS")
+        print("\n5 - BORRAR CUENTA")
+        print("\n6 - SALIR")
 
         # Input del usuario
         user_command = input("\nINPUT: ")
@@ -155,8 +156,34 @@ class Interface:
                 print("\nNO HAY NINGUN DATO BANCARIO GUARDADO")
                 Interface.login_done(username)
         elif user_command == "3":
-            aux = Interface.print_data(username)
+            database = DatabaseMethods()
+            key = database.get_keyA(username)
+            lista_files = Criptadores.file_encription(bytes.fromhex(key))
+            aux = database.store_files(username , lista_files)
+
+            if type(lista_files) == "NoneType":
+                print("\n NO HAY ARCHIVOS PARA GUARDAR")
+
+            else:
+                for elem in lista_files:
+                    if elem != "null":
+                        print("\n TUS ARCHIVOS HAN SIDO GUARDADOS")
+                        os.remove("Input_Files/" + elem)
+                    else:
+                        print("\n NO HAY ARCHIVOS PARA GUARDAR")
+
         elif user_command == "4":
+            database = DatabaseMethods()
+            key = database.get_keyA(username)
+            file_list = database.get_datos_secundarios_file(username)
+            if len(file_list) > 0 :
+                Criptadores.file_decriptor(file_list, bytes.fromhex(key))
+                print("\n ARCHIVOS RECUPERADOS")
+            else:
+                print("\n NO TIENES ARCHIVOS GUARDADOS")
+
+
+        elif user_command == "5":
             # Recogiendo base de datos
             database = DatabaseMethods()
 
@@ -169,7 +196,7 @@ class Interface:
 
             Interface.inicial()
         else:
-            DatabaseMethods.borrar_key(username, "DataBase/datos_principales.json")
+            DatabaseMethods.borrar_key(username, "Database/datos_principales.json")
             Interface.quit_program()
 
         Interface.login_done(username)
