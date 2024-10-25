@@ -133,6 +133,7 @@ class Interface:
         # Imprimiendo las opciones
         print("\n1 - AÑADIR DATOS BANCARIOS NUEVOS A TU CUENTA ")
         print("\n2 - VER DATOS BANCARIOS ")
+        print("\n3 - VER ARCHIVOS MEDICOS ")
         print("\n3 - BORRAR CUENTA")
         print("\n4 - SALIR")
 

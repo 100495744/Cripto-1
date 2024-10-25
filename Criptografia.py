@@ -1,7 +1,7 @@
 import hashlib
 
-from cryptography.hazmat.primitives import padding
-from cryptography.hazmat.primitives import hashes, hmac
+
+#from cryptography.hazmat.primitives import hashes, hmac
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import os

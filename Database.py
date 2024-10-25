@@ -1,7 +1,7 @@
 #Funciones para las bases de datos
 import json
 import os
-from cryptography.hazmat.primitives import padding
+
 
 
 class DatabaseMethods:
