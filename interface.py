@@ -134,14 +134,14 @@ class Interface:
         print("\n1 - AÑADIR DATOS BANCARIOS NUEVOS A TU CUENTA ")
         print("\n2 - VER DATOS BANCARIOS ")
         print("\n3 - VER ARCHIVOS MEDICOS ")
-        print("\n3 - BORRAR CUENTA")
-        print("\n4 - SALIR")
+        print("\n4 - BORRAR CUENTA")
+        print("\n5 - SALIR")
 
         # Input del usuario
         user_command = input("\nINPUT: ")
 
         # Comprobando que introduce el valor correcto
-        while user_command != "1" and user_command != "2" and user_command != "3" and user_command != "4":
+        while user_command != "1" and user_command != "2" and user_command != "3" and user_command != "4" and user_command != "5":
             user_command = input("\nVALOR INCORRECTO, NUEVO INPUT: ")
 
         if user_command == "1":
@@ -154,6 +154,8 @@ class Interface:
                 print("\nNO HAY NINGUN DATO BANCARIO GUARDADO")
                 Interface.login_done(username)
         elif user_command == "3":
+            aux = Interface.print_data(username)
+        elif user_command == "4":
             # Recogiendo base de datos
             database = DatabaseMethods()
 
@@ -179,7 +181,7 @@ class Interface:
 
         # Recogiendo la base de datos y cifrador
         database = DatabaseMethods
-        encryption = Encryption()
+        encryption = Criptadores()
 
         # Base de datos como diccionario
         database_value = database.get_database("DataBase/datos_secundarios.json")
@@ -219,7 +221,7 @@ class Interface:
 
         # Cifrando el numero de cuenta con aes
         iv = os.urandom(16)
-        aux = Encryption.cifrador_aes(command_c, bytes.fromhex(key), iv)
+        aux = Criptadores.cifrador_aes(command_c, bytes.fromhex(key), iv)
         password_encrypted = aux[0]
 
         # Valor de iv

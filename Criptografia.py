@@ -78,6 +78,22 @@ class Criptadores:
         return file_hash.hexdigest()
 
 
+    def string_encription(self,string,key):
+        #creamos el encriptador que genera un IV
+        cipher_encrypt = AES.new(key, AES.MODE_CFB)
+        ciphered_bytes = cipher_encrypt.encrypt(string)
+
+        #devolvemos el dato encriptado y el iv
+        return ciphered_bytes , cipher_encrypt.iv
+
+    def string_decript(self,string, key , iv):
+
+        #creamos el encriptador con la key y el iv
+        cipher_encrypt = AES.new(key, AES.MODE_CFB, iv=iv)
+        decrypted_bytes = cipher_encrypt.decrypt(string)
+
+        return decrypted_bytes
+
     @staticmethod
     # Cifrado HMAC con SALT
     def hash_hmac_password(password, salt=os.urandom(8)):
