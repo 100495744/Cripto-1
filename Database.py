@@ -31,16 +31,13 @@ class DatabaseMethods:
     # Función devuelve el valor del key que utiliza para el cifrador AES
     def get_keyA(username):
         # Abriendo fichero de keys
-        f = open("DataBase/keys.json", "r")
+        f = open("DataBase/datos_principales.json", "r")
 
         # Recogiendo base de datos
         data = json.load(f)
-
-        # Devolviendo el valor de keyA del usuario
-        return data[username]["keyA"]
-
-        # Cerrando fichero
         f.close()
+        # Devolviendo el valor de keyA del usuario
+        return data[username]["key"]
 
     @staticmethod
     # Función devuelve la base de datos como diccionarios
