@@ -90,11 +90,17 @@ class Interface:
     def login():
         # Pantalla de carga
         Interface.loading()
-        print("PANTALLA DE INICIO DE SESIÓN")
+        print("PANTALLA DE INICIO DE SESIÓN ")
+        print("-------------------------------")
+        print("PARA SALIR PON 0 EN USUARIO")
 
         # Recogiendo usuario y contraseña
         command_u = input("\nUSUARIO: ")
         command_c = input("\nCONTRASEÑA: ")
+
+        if  command_u == "0" :
+            Interface.inicial()
+
 
         # Fetch de la base de datos
         database = DatabaseMethods()
