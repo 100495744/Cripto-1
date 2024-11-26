@@ -139,9 +139,9 @@ class Interface:
 
         # Imprimiendo las opciones
         print("\n1 - AÑADIR DATOS DE SEGURO A TU CUENTA ")
-        print("\n2 - VER DATOS BANCARIOS ")
+        print("\n2 - VER DATOS DEL SEGURO ")
         print("\n3 - GUARDAR ARCHIVOS MEDICOS ")
-        print("\n4 - RECUPERAR ARCHIVOS MEDIVOS")
+        print("\n4 - RECUPERAR ARCHIVOS MEDICOS")
         print("\n5 - BORRAR CUENTA")
         print("\n6 - SALIR")
 
@@ -149,7 +149,7 @@ class Interface:
         user_command = input("\nINPUT: ")
 
         # Comprobando que introduce el valor correcto
-        while user_command != "1" and user_command != "2" and user_command != "3" and user_command != "4" and user_command != "5":
+        while user_command != "1" and user_command != "2" and user_command != "3" and user_command != "4" and user_command != "5" and user_command != "6":
             user_command = input("\nVALOR INCORRECTO, NUEVO INPUT: ")
 
         if user_command == "1":
@@ -159,7 +159,7 @@ class Interface:
             # Imprime todas los datos
             aux = Interface.print_data(username)
             if aux == -1:
-                print("\nNO HAY NINGUN DATO BANCARIO GUARDADO")
+                print("\nNO HAY NINGUN DATO DEL SEGURO GUARDADO")
                 Interface.login_done(username)
         elif user_command == "3":
             database = DatabaseMethods()
@@ -201,7 +201,7 @@ class Interface:
             print("\nCUENTA BORRADA!")
 
             Interface.inicial()
-        else:
+        elif user_command == "6":
             DatabaseMethods.borrar_key(username, "Database/datos_principales.json")
             Interface.quit_program()
 
@@ -245,8 +245,8 @@ class Interface:
         Interface.loading()
 
         # Entidad financiera y numero de cuenta
-        command_u = str(input("\nENTIDAD FINANCIERA: "))
-        command_c = str(input("\nNUMERO DE CUENTA: "))
+        command_u = str(input("\nNOMBRE DEL SEGURO: "))
+        command_c = str(input("\nNUMERO DEL SEGURO: "))
 
         # Recogiendo la base de datos
         database = DatabaseMethods()

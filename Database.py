@@ -186,7 +186,7 @@ class DatabaseMethods:
 
         data = json.load(f)
 
-        return data[username]["files"][0]
+        return data[username]["files"]
 
     @staticmethod
     def store_files( username, file_list):
