@@ -13,5 +13,27 @@
         "files": [
             "problema-juguetes.ods"
         ]
+    },
+    "David": {
+        "adeslas": [
+            "65fcf629",
+            "fdf9a78269285a6abc54b85f75326961"
+        ]
+    },
+    "davo": {
+        "adeslas": [
+            "feacbb",
+            "0426932c7d745328c622b7cc95b9775f"
+        ],
+        "files": null
+    },
+    "david": {
+        "adelas": [
+            "9edfde",
+            "3f11ef78239df288c4c1bbf7a3d7c848"
+        ],
+        "files": [
+            "Juegos.js"
+        ]
     }
 }

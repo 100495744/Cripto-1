@@ -7,6 +7,10 @@ from cryptography.hazmat.primitives import hashes, hmac
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import os
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.backends import default_backend
+import os
 
 class Criptadores:
 
@@ -130,3 +134,99 @@ class Criptadores:
         clave_acceso_bytes = clave_acceso.encode('utf-8')
         clave_derivada = kdf.derive(clave_acceso_bytes)
         return binascii.hexlify(clave_derivada).decode('utf-8')
+
+
+
+class FirmaDigital:
+    def __init__(self):
+        # Almacenará las claves generadas
+        self.private_key = None
+        self.public_key = None
+
+    def generar_claves(self, usuario):
+        """
+        Genera un par de claves (privada y pública) y las guarda en archivos.
+        """
+        # Generar clave privada
+        self.private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+            backend=default_backend()
+        )
+        # Generar clave pública
+        self.public_key = self.private_key.public_key()
+
+        # Serializar y guardar claves
+        self.serializar_claves(usuario)
+
+        print(f"Claves generadas y guardadas para el usuario: {usuario}")
+
+    def serializar_claves(self, usuario):
+        """
+        Serializa y guarda las claves en archivos PEM.
+        """
+        # Guardar clave privada
+        with open(f"{usuario}_private_key.pem", "wb") as private_file:
+            private_file.write(
+                self.private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+            )
+        # Guardar clave pública
+        with open(f"{usuario}_public_key.pem", "wb") as public_file:
+            public_file.write(
+                self.public_key.public_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PublicFormat.SubjectPublicKeyInfo
+                )
+            )
+
+    def firmar_mensaje(self, mensaje, usuario):
+        """
+        Firma un mensaje con la clave privada del usuario.
+        """
+        with open(f"{usuario}_private_key.pem", "rb") as private_file:
+            private_key = serialization.load_pem_private_key(
+                private_file.read(),
+                password=None,
+                backend=default_backend()
+            )
+
+        firma = private_key.sign(
+            mensaje.encode(),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+        print("Mensaje firmado con éxito.")
+        return firma
+
+    def verificar_firma(self, mensaje, firma, usuario):
+        """
+        Verifica una firma usando la clave pública del usuario.
+        """
+        with open(f"{usuario}_public_key.pem", "rb") as public_file:
+            public_key = serialization.load_pem_public_key(
+                public_file.read(),
+                backend=default_backend()
+            )
+
+        try:
+            public_key.verify(
+                firma,
+                mensaje.encode(),
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                hashes.SHA256()
+            )
+            print("La firma es válida.")
+            return True
+        except Exception as e:
+            print(f"La firma no es válida: {e}")
+            return False

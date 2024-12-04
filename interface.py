@@ -1,5 +1,6 @@
 from Database import DatabaseMethods
 from Criptografia import Criptadores
+from Criptografia import FirmaDigital
 import os
 
 
@@ -143,7 +144,8 @@ class Interface:
         print("\n3 - GUARDAR ARCHIVOS MEDICOS ")
         print("\n4 - RECUPERAR ARCHIVOS MEDICOS")
         print("\n5 - BORRAR CUENTA")
-        print("\n6 - SALIR")
+        print("\n6 - FIRMA DIGITAL")
+        print("\n7 - SALIR")
 
         # Input del usuario
         user_command = input("\nINPUT: ")
@@ -201,12 +203,55 @@ class Interface:
             print("\nCUENTA BORRADA!")
 
             Interface.inicial()
+
+
         elif user_command == "6":
+            Interface.firma_digital_menu()
+
+        elif user_command == "7":
             DatabaseMethods.borrar_key(username, "Database/datos_principales.json")
             Interface.quit_program()
 
         Interface.login_done(username)
 
+    @staticmethod
+    def firma_digital_menu():
+        """
+        Menú para la funcionalidad de firma digital.
+        """
+        firma_digital = FirmaDigital()
+
+        while True:
+            Interface.loading()
+            print("\n1 - GENERAR CLAVES")
+            print("2 - FIRMAR MENSAJE")
+            print("3 - VERIFICAR FIRMA")
+            print("4 - VOLVER AL MENÚ PRINCIPAL")
+            Interface.loading()
+
+            opcion = input("\nSelecciona una opción: ")
+
+            if opcion == "1":
+                usuario = input("Introduce el nombre del usuario: ")
+                firma_digital.generar_claves(usuario)
+
+            elif opcion == "2":
+                usuario = input("Introduce el nombre del usuario: ")
+                mensaje = input("Introduce el mensaje a firmar: ")
+                firma = firma_digital.firmar_mensaje(mensaje, usuario)
+                print(f"Firma generada: {firma.hex()}")
+
+            elif opcion == "3":
+                usuario = input("Introduce el nombre del usuario: ")
+                mensaje = input("Introduce el mensaje original: ")
+                firma = bytes.fromhex(input("Introduce la firma en formato HEX: "))
+                firma_digital.verificar_firma(mensaje, firma, usuario)
+
+            elif opcion == "4":
+                break
+
+            else:
+                print("Opción no válida.")
 
     @staticmethod
     # Función para imprimir los nombres y datos bancarios
