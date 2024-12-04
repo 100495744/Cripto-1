@@ -139,13 +139,12 @@ class Criptadores:
 
 class FirmaDigital:
     def __init__(self):
-        # Almacenará las claves generadas
         self.private_key = None
         self.public_key = None
 
     def generar_claves(self, usuario):
         """
-        Genera un par de claves (privada y pública) y las guarda en archivos.
+        Genera un par de claves (privada y pública) y las guarda en carpetas específicas.
         """
         # Generar clave privada
         self.private_key = rsa.generate_private_key(
@@ -163,10 +162,14 @@ class FirmaDigital:
 
     def serializar_claves(self, usuario):
         """
-        Serializa y guarda las claves en archivos PEM.
+        Serializa y guarda las claves en las carpetas correspondientes.
         """
+        # Crear carpetas si no existen
+        os.makedirs("llave_priv", exist_ok=True)
+        os.makedirs("llave_pub", exist_ok=True)
+
         # Guardar clave privada
-        with open(f"{usuario}_private_key.pem", "wb") as private_file:
+        with open(f"llave_priv/{usuario}_private_key.pem", "wb") as private_file:
             private_file.write(
                 self.private_key.private_bytes(
                     encoding=serialization.Encoding.PEM,
@@ -175,7 +178,7 @@ class FirmaDigital:
                 )
             )
         # Guardar clave pública
-        with open(f"{usuario}_public_key.pem", "wb") as public_file:
+        with open(f"llave_pub/{usuario}_public_key.pem", "wb") as public_file:
             public_file.write(
                 self.public_key.public_bytes(
                     encoding=serialization.Encoding.PEM,
@@ -185,15 +188,20 @@ class FirmaDigital:
 
     def firmar_mensaje(self, mensaje, usuario):
         """
-        Firma un mensaje con la clave privada del usuario.
+        Firma un mensaje con la clave privada y guarda la firma en una carpeta específica.
         """
-        with open(f"{usuario}_private_key.pem", "rb") as private_file:
+        # Crear carpeta para firmas si no existe
+        os.makedirs("firmas", exist_ok=True)
+
+        # Cargar clave privada
+        with open(f"llave_priv/{usuario}_private_key.pem", "rb") as private_file:
             private_key = serialization.load_pem_private_key(
                 private_file.read(),
                 password=None,
                 backend=default_backend()
             )
 
+        # Firmar el mensaje
         firma = private_key.sign(
             mensaje.encode(),
             padding.PSS(
@@ -202,19 +210,32 @@ class FirmaDigital:
             ),
             hashes.SHA256()
         )
-        print("Mensaje firmado con éxito.")
+
+        # Guardar firma
+        with open(f"firmas/{usuario}_firma.sig", "wb") as firma_file:
+            firma_file.write(firma)
+
+        print("Mensaje firmado y guardado en la carpeta de firmas.")
         return firma
 
-    def verificar_firma(self, mensaje, firma, usuario):
+    import base64
+
+    def verificar_firma(self, mensaje, firma_path, usuario):
         """
-        Verifica una firma usando la clave pública del usuario.
+        Verifica una firma en formato binario usando la clave pública.
         """
-        with open(f"{usuario}_public_key.pem", "rb") as public_file:
+        # Cargar clave pública
+        with open(f"llave_pub/{usuario}_public_key.pem", "rb") as public_file:
             public_key = serialization.load_pem_public_key(
                 public_file.read(),
                 backend=default_backend()
             )
 
+        # Leer firma en formato binario
+        with open(firma_path, "rb") as firma_file:
+            firma = firma_file.read()
+
+        # Verificar la firma
         try:
             public_key.verify(
                 firma,
@@ -230,3 +251,8 @@ class FirmaDigital:
         except Exception as e:
             print(f"La firma no es válida: {e}")
             return False
+
+
+
+
+

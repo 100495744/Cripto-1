@@ -151,7 +151,7 @@ class Interface:
         user_command = input("\nINPUT: ")
 
         # Comprobando que introduce el valor correcto
-        while user_command != "1" and user_command != "2" and user_command != "3" and user_command != "4" and user_command != "5" and user_command != "6":
+        while user_command != "1" and user_command != "2" and user_command != "3" and user_command != "4" and user_command != "5" and user_command != "6" and user_command != "7":
             user_command = input("\nVALOR INCORRECTO, NUEVO INPUT: ")
 
         if user_command == "1":
@@ -215,6 +215,7 @@ class Interface:
         Interface.login_done(username)
 
     @staticmethod
+    @staticmethod
     def firma_digital_menu():
         """
         Menú para la funcionalidad de firma digital.
@@ -234,18 +235,18 @@ class Interface:
             if opcion == "1":
                 usuario = input("Introduce el nombre del usuario: ")
                 firma_digital.generar_claves(usuario)
+                firma_digital.serializar_claves(usuario)
 
             elif opcion == "2":
                 usuario = input("Introduce el nombre del usuario: ")
                 mensaje = input("Introduce el mensaje a firmar: ")
-                firma = firma_digital.firmar_mensaje(mensaje, usuario)
-                print(f"Firma generada: {firma.hex()}")
+                firma_digital.firmar_mensaje(mensaje, usuario)
 
             elif opcion == "3":
                 usuario = input("Introduce el nombre del usuario: ")
                 mensaje = input("Introduce el mensaje original: ")
-                firma = bytes.fromhex(input("Introduce la firma en formato HEX: "))
-                firma_digital.verificar_firma(mensaje, firma, usuario)
+                firma_path = input("Introduce la ruta de la firma (archivo .sig): ")
+                firma_digital.verificar_firma(mensaje, firma_path, usuario)
 
             elif opcion == "4":
                 break
