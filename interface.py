@@ -50,50 +50,19 @@ class Interface:
 
     @staticmethod
     # Estado de crear nueva cuenta
-    def new_account():
-
-        # Pantalla de carga
-        Interface.loading()
-        print("PANTALLA DE REGISTRO")
+    def new_account( command_u , command_c , command_c2):
 
         # Fetch por la base de datos
         database = DatabaseMethods()
-
-        # Mensajes para el usuario
-        command_u = input("\nUSUARIO: ")
-        command_c = input("\nCONTRASEÑA: ")
-        command_c2 = input("\nCONFIRMA CONTRASEÑA: ")
-
-        # Comprobando que las dos contraseñas coinciden
-        while command_c != command_c2:
-            print("\nLAS CONTRASEÑAS NO COINCIDEN, INTENTALO DE NUEVO")
-            command_c = input("\nCONTRASEÑA: ")
-            command_c2 = input("\nCONFIRMA CONTRASEÑA: ")
-
-        # Comprobando que no existe el usuario
-        if database.username_existe(command_u, "DataBase/datos_principales.json") \
-                or database.username_existe(command_u, "DataBase/keys.json"):
-            print("YA EXISTE EL USUARIO, VUELVA A INTENTARLO DE NUEVO")
-            Interface.inicial()
 
         # Creando el usuario e introduciéndolo en la base de datos
         hashed_password = Criptadores.hash_hmac_password(command_c2)
         database.write_json_datos_principales(command_u, hashed_password[0], Criptadores.generar_clave_derivada(command_c2))
         database.write_json_keys_salt(command_u, hashed_password[1])
 
-        print("\nCUENTA CREADA")
-
-        # Redirigiendo a la pantalla de login
-        Interface.login_done(command_u)
-
     @staticmethod
     # Estado de inicio de sesión
-    def login():
-        # Pantalla de carga
-        Interface.loading()
-        print("PANTALLA DE INICIO DE SESIÓN ")
-        print("-------------------------------")
-        print("PARA SALIR PON 0 EN USUARIO")
+    def login( command_u , command_c):
 
         # Recogiendo usuario y contraseña
         command_u = input("\nUSUARIO: ")
@@ -257,8 +226,6 @@ class Interface:
     @staticmethod
     # Función para imprimir los nombres y datos bancarios
     def print_data(username):
-        # Pantalla de carga
-        Interface.loading()
 
         # Recogiendo la base de datos y cifrador
         database = DatabaseMethods
@@ -276,23 +243,19 @@ class Interface:
         # Recogiendo valor keyA del usuario
         keyA = database.get_keyA(username)
         index = 1
+        text = ""
         for current in database_value:
-            print("\n", index, " - ", current, " : "
-                  ,encryption.string_decript(bytes.fromhex(keyA)
-                  ,bytes.fromhex(database_value[current][1])
-                  ,bytes.fromhex(database_value[current][0])))
+            text += ("\n" + str(index), " - " + str(current) + " : " +
+                     str(encryption.string_decript(bytes.fromhex(keyA)
+                        ,bytes.fromhex(database_value[current][1]) ,
+                        bytes.fromhex(database_value[current][0]))))
             index += 1
+        return text
 
     @staticmethod
     # Función que añade nuevos datos bancarios del usuario
-    def add_data(username):
+    def add_data(username , command_u, command_c):
 
-        # Pantalla de carga
-        Interface.loading()
-
-        # Entidad financiera y numero de cuenta
-        command_u = str(input("\nNOMBRE DEL SEGURO: "))
-        command_c = str(input("\nNUMERO DEL SEGURO: "))
 
         # Recogiendo la base de datos
         database = DatabaseMethods()
@@ -311,10 +274,6 @@ class Interface:
         # Añadiendo a la base de datos
         database.write_json_datos_secundarios(username, command_u, password_encrypted, iv)
 
-        print("\nDATOS BANCARIOS GUARDADOS!!!")
-
-        # Redirigiendo
-        Interface.login_done(username)
 
     @staticmethod
     # Termina el programa

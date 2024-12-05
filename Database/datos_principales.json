@@ -3,9 +3,6 @@
         "password": "3915ed035d4fa94c8b67d11fa0e2cd9ade4eb8119bcb47a299f130ca90cec1cc",
         "key": "1bf6356cc5270e67bca044d03d730ce93136f0c87b3568da214996caf5828fa7"
     },
-    "ale": {
-        "password": "0a34b2402bba2e0a6e0b9841895899fe09d5a27acf1b42482dd2ba8b98088f71"
-    },
     "David": {
         "password": "67978e2233e92de5073e92937bb771ac39b3b4c7c94c47f025a3f60181076e5c",
         "key": "60b39cd76967105fd5288381301787fd5fbd9d6e29ccb250ac784becf8207e35"
@@ -20,5 +17,9 @@
     },
     "davidP": {
         "password": "e351c69d8113b4782a29a2bbe2866eef0e71ea91967cdde06fd76d020d1c2b45"
+    },
+    "alejandro": {
+        "password": "728b8644e32d833ddcd79d02f353999bb57fc34ea9e502cee750760e9a05469e",
+        "key": "61248cec8214efe89bc4b8442bfc0a929a6e2516b82b8dcdaa4bd4c0876430fa"
     }
 }

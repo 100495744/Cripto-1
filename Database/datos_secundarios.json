@@ -5,15 +5,6 @@
             "9db36b21cb6bc8a4e2c2e2f3f0050a79"
         ]
     },
-    "ale": {
-        "adeslas": [
-            "173242fa6f2d72fc",
-            "dea07ce54c629e405993cd539447ea84"
-        ],
-        "files": [
-            "problema-juguetes.ods"
-        ]
-    },
     "David": {
         "adeslas": [
             "65fcf629",
@@ -43,6 +34,12 @@
         ],
         "files": [
             "Juegos.js"
+        ]
+    },
+    "alejandro": {
+        "sanitas": [
+            "829c83b94553b947f8",
+            "cdc7223b6ad8ced6868567262cca03b4"
         ]
     }
 }
