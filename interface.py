@@ -9,13 +9,13 @@ import os
 class Interface:
 
     @staticmethod
-    # Pantalla de carga
+    # Pantalla de carga- SE PUEDE BORRAR
     def loading():
         print("\n-----------------------------------------------------------------------------------------------------")
 
 
     @staticmethod
-    # Estado inicial del programa
+    # Estado inicial del programa - SE PUEDE BORRAR
     def inicial():
 
         # Pantalla de carga
@@ -50,7 +50,7 @@ class Interface:
 
 
     @staticmethod
-    # Estado de crear nueva cuenta
+    # Estado de crear nueva cuenta - NO BORRAR
     def new_account( command_u , command_c , command_c2):
 
         # Fetch por la base de datos
@@ -62,7 +62,7 @@ class Interface:
         database.write_json_keys_salt(command_u, hashed_password[1])
 
     @staticmethod
-    # Estado de inicio de sesión
+    # Estado de inicio de sesión- SE PUEDE BORRAR
     def login( command_u , command_c):
 
         # Recogiendo usuario y contraseña
@@ -101,6 +101,7 @@ class Interface:
             print("\nCONTRASEÑA INCORRECTA, VUELVA A INTENTARLO DE NUEVO")
             Interface.login()
 
+    #SE PUEDE BORRAR
     @staticmethod
     # Estado en que el usuario ya está logged in con su información
     def login_done(username):
@@ -237,7 +238,7 @@ class Interface:
                 print("Opción no válida.")
 
     @staticmethod
-    # Función para imprimir los nombres y datos bancarios
+    # Función para imprimir los nombres y datos bancarios - NO BORRAR
     def print_data(username):
 
         # Recogiendo la base de datos y cifrador
