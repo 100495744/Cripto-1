@@ -1,7 +1,8 @@
 #Funciones para las bases de datos
 import json
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
 import os
-from cryptography.hazmat.primitives import padding
 
 
 class DatabaseMethods:
@@ -225,6 +226,37 @@ class DatabaseMethods:
         # Cerrando fichero
         f.close()
 
+    # deserializar la llave privada
+    @staticmethod
+    def deserializar_llave_privada(usuario):
+        with open(f"llave_priv/{usuario}_private_key.pem", "rb") as f:
+            private_key = serialization.load_pem_private_key(
+                f.read(),
+                password=bytes(contraseña, "utf-8"),
+                backend=default_backend()
+            )
+            f.close()
+        return private_key
+
+    # deserializar la llave publica
+    @staticmethod
+    def deserializar_llave_publica(usuario):
+        with open(f"llave_pub/{usuario}_public_key.pem", "rb") as f:
+            public_key = serialization.load_pem_public_key(
+                f.read(),
+                backend=default_backend()
+            )
+            f.close()
+        return public_key
+
+
+    # Guardar certificado
+    @staticmethod
+    def guardar_certificado(usuario, certificado):
+        with open(f"certificados/{usuario}_public_key.pem", "wb") as f:
+            f.write(certificado)
+            f.close()
+
 
     @staticmethod
     # Función comprueba si está vacío la base de datos
@@ -262,6 +294,8 @@ class DatabaseMethods:
 
         # Cerrando fichero
         f.close()
+
+
 
 
 DatabaseMethods.is_empty("DataBase/datos_principales.json")

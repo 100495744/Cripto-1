@@ -1,105 +1,58 @@
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.x509 import CertificateBuilder, BasicConstraints
 from cryptography import x509
 from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes
+from Database import DatabaseMethods
+from cryptography.hazmat.backends import default_backend
 import datetime
-import os
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import serialization
 
 
-class AutoridadCertificacion:
-    def __init__(self, nombre, es_raiz=True, cert_padre=None, clave_privada_padre=None):
-        """
-        Inicializa la AC (raíz o subordinada).
-        """
-        self.nombre = nombre
-        self.es_raiz = es_raiz
-        self.cert_padre = cert_padre
-        self.clave_privada_padre = clave_privada_padre
+class Certificados:
+    def __init__(self):
+        self.database = DatabaseMethods()
+        self.guardar_certificado = self.database.guardar_certificado
+        self.deserializar_privada = self.database.deserializar_llave_privada
+        self.deserializar_publica = self.database.deserializar_llave_publica
 
-        self.private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        self.public_key = self.private_key.public_key()
-        self.certificado = None
-
-        if es_raiz:
-            self.generar_certificado_raiz()
-        else:
-            self.generar_certificado_subordinado()
-
-    def generar_certificado_raiz(self):
-        """
-        Genera un certificado autofirmado para la AC raíz.
-        """
-        subject = x509.Name([
+    def solicitar_certificado(self, user):
+        privada = self.deserializar_privada(user)
+        self.publica = self.deserializar_publica(user)
+        # Generar certificado
+        subject = issuer = x509.Name([
             x509.NameAttribute(NameOID.COUNTRY_NAME, u"ES"),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.nombre),
-            x509.NameAttribute(NameOID.COMMON_NAME, self.nombre),
+            x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Madrid"),
+            x509.NameAttribute(NameOID.LOCALITY_NAME, u"Leganés"),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"Universidad Carlos III de Madrid"),
+            x509.NameAttribute(NameOID.COMMON_NAME, u"uc3m.es"),
         ])
-        self.certificado = CertificateBuilder().subject_name(subject).issuer_name(subject).public_key(
-            self.public_key).serial_number(x509.random_serial_number()).not_valid_before(
-            datetime.datetime.utcnow()).not_valid_after(
-            datetime.datetime.utcnow() + datetime.timedelta(days=3650)).add_extension(
-            BasicConstraints(ca=True, path_length=None), critical=True).sign(self.private_key, hashes.SHA256())
-        self.guardar_claves_y_certificado()
+        cert = x509.CertificateBuilder().subject_name(
+            subject
+        ).issuer_name(
+            issuer
+        ).public_key(
+            self.publica
+        ).serial_number(
+            x509.random_serial_number()
+        ).not_valid_before(
+            datetime.datetime.utcnow()
+        ).not_valid_after(
+            # Our certificate will be valid for 10 days
+            datetime.datetime.utcnow() + datetime.timedelta(days=10)
+        ).sign(privada, hashes.SHA256())
+        # serializamos el certificado y lo guardamos
+        self.guardar_certificado(user, cert.public_bytes(serialization.Encoding.PEM))
+        return cert
 
-    def generar_certificado_subordinado(self):
-        """
-        Genera un certificado firmado por la AC padre.
-        """
-        if not self.cert_padre or not self.clave_privada_padre:
-            raise ValueError(
-                "Se requiere un certificado y clave privada de la AC padre para generar una AC subordinada.")
-
-        subject = x509.Name([
-            x509.NameAttribute(NameOID.COUNTRY_NAME, u"ES"),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.nombre),
-            x509.NameAttribute(NameOID.COMMON_NAME, self.nombre),
-        ])
-        self.certificado = CertificateBuilder().subject_name(subject).issuer_name(self.cert_padre.subject).public_key(
-            self.public_key).serial_number(x509.random_serial_number()).not_valid_before(
-            datetime.datetime.utcnow()).not_valid_after(
-            datetime.datetime.utcnow() + datetime.timedelta(days=365)).add_extension(
-            BasicConstraints(ca=True, path_length=0), critical=True).sign(self.clave_privada_padre, hashes.SHA256())
-        self.guardar_claves_y_certificado()
-
-    def guardar_claves_y_certificado(self):
-        """
-        Guarda las claves y el certificado en archivos.
-        """
-        os.makedirs("certificados", exist_ok=True)
-        with open(f"certificados/{self.nombre}_private_key.pem", "wb") as f:
-            f.write(self.private_key.private_bytes(encoding=serialization.Encoding.PEM,
-                                                   format=serialization.PrivateFormat.PKCS8,
-                                                   encryption_algorithm=serialization.NoEncryption()))
-        with open(f"certificados/{self.nombre}_cert.pem", "wb") as f:
-            f.write(self.certificado.public_bytes(encoding=serialization.Encoding.PEM))
-
-    def emitir_certificado_usuario(self, nombre_usuario, public_key):
-        """
-        Emite un certificado para un usuario final.
-        """
-        subject = x509.Name([
-            x509.NameAttribute(NameOID.COUNTRY_NAME, u"ES"),
-            x509.NameAttribute(NameOID.COMMON_NAME, nombre_usuario),
-        ])
-        cert = CertificateBuilder().subject_name(subject).issuer_name(self.certificado.subject).public_key(
-            public_key).serial_number(x509.random_serial_number()).not_valid_before(
-            datetime.datetime.utcnow()).not_valid_after(datetime.datetime.utcnow() + datetime.timedelta(days=365)).sign(
-            self.private_key, hashes.SHA256())
-
-        with open(f"certificados/{nombre_usuario}_cert.pem", "wb") as f:
-            f.write(cert.public_bytes(encoding=serialization.Encoding.PEM))
-        print(f"Certificado emitido para el usuario '{nombre_usuario}'.")
-
-    @staticmethod
-    def cargar_certificado_y_clave(cert_path, key_path):
-        """
-        Carga un certificado y su clave privada desde archivos.
-        """
-        with open(cert_path, "rb") as f:
-            cert = x509.load_pem_x509_certificate(f.read())
-        with open(key_path, "rb") as f:
-            private_key = serialization.load_pem_private_key(f.read(), password=None)
-        return cert, private_key
-
-
+    def verificar_certificado(self, cert):
+        try:
+            self.publica.verify(
+                cert.signature,
+                cert.tbs_certificate_bytes,
+                padding.PKCS1v15(),
+                cert.signature_hash_algorithm,
+            )
+            return True
+        except InvalidSignature:
+            return False

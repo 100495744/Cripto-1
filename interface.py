@@ -1,6 +1,7 @@
 from Database import DatabaseMethods
 from Criptografia import Criptadores
 from Criptografia import FirmaDigital
+from AutoridadCertificacion import Certificados
 import os
 
 
@@ -189,16 +190,15 @@ class Interface:
         Menú para la funcionalidad de firma digital.
         """
         firma_digital = FirmaDigital()
-        firma_digital.inicializar_ac()
+        certificado = Certificados()
 
         while True:
             Interface.loading()
             print("\n1 - GENERAR CLAVES")
             print("2 - FIRMAR MENSAJE")
             print("3 - VERIFICAR FIRMA")
-            print("4 - GENERAR CERTIFICADO DE USUARIO")
-            print("5 - VERIFICAR CERTIFICADO")
-            print("6 - VOLVER AL MENÚ PRINCIPAL")
+            print("4 - VERIFICAR CERTIFICADO")
+            print("5 - VOLVER AL MENÚ PRINCIPAL")
             Interface.loading()
 
             opcion = input("\nSelecciona una opción: ")
@@ -221,14 +221,13 @@ class Interface:
 
             elif opcion == "4":
                 usuario = input("Introduce el nombre del usuario: ")
-                firma_digital.emitir_certificado_usuario(usuario)
+                cert = certificado.solicitar_certificado(usuario)
+                if certificado.verificar_certificado(cert):
+                    print("Certificado válido")
+                else:
+                    print("Certificado no válido")
 
             elif opcion == "5":
-                cert_path = input("Ruta del certificado a verificar: ")
-                ac_raiz_cert_path = "certificados/AC1_cert.pem"
-                firma_digital.verificar_certificado(cert_path, ac_raiz_cert_path)
-
-            elif opcion == "6":
                 break
 
 
