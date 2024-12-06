@@ -1,3 +1,55 @@
 {
-
+    "jose": {
+        "adeslas": [
+            "abd74a3b",
+            "9db36b21cb6bc8a4e2c2e2f3f0050a79"
+        ]
+    },
+    "David": {
+        "adeslas": [
+            "65fcf629",
+            "fdf9a78269285a6abc54b85f75326961"
+        ]
+    },
+    "davo": {
+        "adeslas": [
+            "feacbb",
+            "0426932c7d745328c622b7cc95b9775f"
+        ],
+        "files": null
+    },
+    "david": {
+        "adelas": [
+            "9edfde",
+            "3f11ef78239df288c4c1bbf7a3d7c848"
+        ],
+        "files": [
+            "Juegos.js"
+        ]
+    },
+    "davidP": {
+        "ase": [
+            "4e9fcf",
+            "1722a6a1d978d58c6a327618957dd7bd"
+        ],
+        "files": [
+            "Juegos.js"
+        ]
+    },
+    "alejandro": {
+        "sanitas": [
+            "829c83b94553b947f8",
+            "cdc7223b6ad8ced6868567262cca03b4"
+        ],
+        "files": [
+            "prueba.pdf",
+            "redir[1].aspx",
+            "Presentation1.odp",
+            "ASDF.pdf"
+        ],
+        "miCasaa": [
+            "1db067bbb7a690",
+            "523cf48fc904d9d363aa21f1d01f7bff"
+        ]
+    }
 }

@@ -14,19 +14,19 @@ import os
 class Criptadores:
 
     @staticmethod
-    def file_encription( key ):
+    def file_encription( key , file_list ):
         #use key in jsons
         buffer_size = 65536
 
         #Take all the names of files inside the folder
-        file_list = os.listdir('Input_Files')
+
 
         for in_file in file_list:
 
             #We open de files
-            input_file = open('Input_files/'+ in_file, 'rb')
+            input_file = open(in_file, 'rb')
 
-            output_file = open( 'Database/EncriptedFiles/' + in_file + '.encrypted', 'wb')
+            output_file = open( 'Database/EncriptedFiles/' + os.path.basename(in_file) + '.encrypted', 'wb')
 
             #Create the cipher object
             cipher_encrypt = AES.new(key, AES.MODE_CFB)
@@ -43,7 +43,6 @@ class Criptadores:
 
             input_file.close()
             output_file.close()
-            return file_list
     @staticmethod
     def file_decriptor(file_names,key):
         buffer_size = 65536

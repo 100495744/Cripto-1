@@ -258,11 +258,14 @@ class Interface:
         index = 1
         text = ""
         for current in database_value:
-            text += ("\n" + str(index), " - " + str(current) + " : " +
-                     str(encryption.string_decript(bytes.fromhex(keyA)
-                        ,bytes.fromhex(database_value[current][1]) ,
-                        bytes.fromhex(database_value[current][0]))))
-            index += 1
+            if current != "files":
+                text +=  "\n" + str(index) + " - " + str(current) + " : " + str(encryption.string_decript(bytes.fromhex(keyA)
+                        ,bytes.fromhex(database_value[current][1]),
+                        bytes.fromhex(database_value[current][0])))
+                index += 1
+        text += "\n Files: "
+        for filesnames in database_value["files"]:
+            text = text + "\n -" + filesnames
         return text
 
     @staticmethod

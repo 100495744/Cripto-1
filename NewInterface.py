@@ -6,6 +6,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
 
 
 LARGEFONT = ("Verdana", 35)
@@ -224,22 +225,28 @@ class Page3(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = ttk.Label(self, text="Bienvenido", font=LARGEFONT)
-        label_data = ttk.Label(self, text ="", font =SMALLFONT , padding=70)
+        label_data = ttk.Label(self, text ="", font =SMALLFONT )
         button_Añadir= ttk.Button(self, text="AÑADIR DATOS DE SEGURO A TU CUENTA", command=
                                   lambda: controller.show_frame(Page4))
         button_ver= ttk.Button(self, text="VER DATOS DEL SEGURO" , command= lambda : printdata())
-        button_recuperar = ttk.Button(self, text="RECUPERAR ARCHIVOS MEDICOS")
-        button_borrar = ttk.Button(self, text="BORRAR CUENTA")
-        button_firma= ttk.Button(self, text="FIRMA DIGITAL")
-        button_salir = ttk.Button(self, text="SALIR", command= lambda : controller.show_frame(StartPage))
+        button_guardar = ttk.Button(self, text="GUARDAR ARCHIVO MEDICO",
+                                    command=lambda: introducirarhivos())
+        button_recuperar = ttk.Button(self, text="RECUPERAR ARCHIVOS MEDICOS" ,
+                                      command =lambda : recuperarArchivos())
 
-        label.grid(row=0, column=4, padx=10, pady=10)
+        button_borrar = ttk.Button(self, text="BORRAR CUENTA", command= lambda: borrarCuenta())
+        button_firma = ttk.Button(self, text="FIRMA DIGITAL")
+        button_salir = ttk.Button(self, text="SALIR",
+                                  command= lambda : controller.show_frame(StartPage) + DatabaseMethods.borrar_key(UsuarioActual, "Database/datos_principales.json"))
+
+        label.grid(row=0, column=2, padx=10, pady=10)
         button_Añadir.grid(row=1, column=1, padx=10, pady=10)
-        button_ver.grid(row=2, column=1, padx=10, pady=10)
-        button_recuperar.grid(row=3, column=1, pady=10)
-        button_borrar.grid(row=4, column=1, pady=10)
-        button_firma.grid(row=5, column=1, pady=10)
-        button_salir.grid(row=6, column=1, pady=10)
+        button_ver.grid(row=3, column=1, padx=10, pady=10)
+        button_guardar.grid(row=4,column=1, padx=10, pady= 10)
+        button_recuperar.grid(row=5, column=1, pady=10)
+        button_borrar.grid(row=6, column=1, pady=10)
+        button_firma.grid(row=7, column=1, pady=10)
+        button_salir.grid(row=8, column=1, pady=10)
 
         def printdata ():
             texto = Interface.print_data(UsuarioActual)
@@ -247,10 +254,39 @@ class Page3(tk.Frame):
                 messagebox.showwarning(tittle=None, message="No hay datos para este usuario")
             else:
                 label_data.config(text=texto)
-                label_data.grid(row=8, column=2)
+                label_data.grid(row=7, column=2)
 
-        def introducirDatos():
-            messagebox.askquestion(tittle=None, message="")
+        def introducirarhivos():
+            openedfile_names = filedialog.askopenfilenames()
+            if not openedfile_names:
+                return
+            key = database.get_keyA(UsuarioActual)
+            Criptadores.file_encription(bytes.fromhex(key), openedfile_names)
+
+            filenames = []
+            for file in openedfile_names:
+                filenames.append(os.path.basename(file))
+            print(filenames)
+            DatabaseMethods.store_files(UsuarioActual,filenames)
+
+        def recuperarArchivos():
+             key = database.get_keyA(UsuarioActual)
+             file_list = database.get_datos_secundarios_file(UsuarioActual)
+             if len(file_list) > 0:
+                 Criptadores.file_decriptor(file_list, bytes.fromhex(key))
+                 print("\n ARCHIVOS RECUPERADOS")
+             else:
+                 print("\n NO TIENES ARCHIVOS GUARDADOS")
+
+
+        def borrarCuenta():
+            # Borrando en los tres base de datos
+            database.borrar_datos_usuario(UsuarioActual, "DataBase/keys.json")
+            database.borrar_datos_usuario(UsuarioActual, "DataBase/datos_principales.json")
+            database.borrar_datos_usuario(UsuarioActual, "DataBase/datos_secundarios.json")
+
+            print("\nCUENTA BORRADA!")
+
 
 class Page4(tk.Frame):
     def __init__(self, parent, controller):
