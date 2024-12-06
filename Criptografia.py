@@ -1,16 +1,17 @@
 import hashlib
-
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 import binascii
 from cryptography.hazmat.primitives import hashes, hmac
 from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
-import os
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization, hashes
 import os
+from AutoridadCertificacion import AutoridadCertificacion
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+
 
 class Criptadores:
 
@@ -141,6 +142,8 @@ class FirmaDigital:
     def __init__(self):
         self.private_key = None
         self.public_key = None
+        self.ac_raiz = None
+        self.ac_subordinada = None
 
     def generar_claves(self, usuario):
         """
@@ -254,5 +257,63 @@ class FirmaDigital:
 
 
 
+    def inicializar_ac(self):
+        """
+        Inicializa las autoridades de certificación (raíz y subordinada).
+        """
+        if not os.path.exists("certificados/AC1_cert.pem"):
+            print("Generando AC raíz...")
+            self.ac_raiz = AutoridadCertificacion(nombre="AC1", es_raiz=True)
+        else:
+            print("Cargando AC raíz existente...")
+            self.ac_raiz = AutoridadCertificacion.cargar_certificado_y_clave(
+                "certificados/AC1_cert.pem", "certificados/AC1_private_key.pem"
+            )
+
+        if not os.path.exists("certificados/AC2_cert.pem"):
+            print("Generando AC subordinada...")
+            self.ac_subordinada = AutoridadCertificacion(
+                nombre="AC2", es_raiz=False, cert_padre=self.ac_raiz[0], clave_privada_padre=self.ac_raiz[1]
+            )
+        else:
+            print("Cargando AC subordinada existente...")
+            self.ac_subordinada = AutoridadCertificacion.cargar_certificado_y_clave(
+                "certificados/AC2_cert.pem", "certificados/AC2_private_key.pem"
+            )
+
+    def emitir_certificado_usuario(self, usuario):
+        """
+        Genera claves y un certificado firmado para un usuario.
+        """
+        # Generar claves del usuario
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        public_key = private_key.public_key()
+
+        # Emitir certificado
+        self.ac_subordinada.emitir_certificado_usuario(usuario, public_key)
+
+        # Guardar claves del usuario
+        os.makedirs("certificados", exist_ok=True)
+        with open(f"certificados/{usuario}_private_key.pem", "wb") as f:
+            f.write(
+                private_key.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.PKCS8,
+                                          encryption_algorithm=serialization.NoEncryption()))
+
+        print(f"Certificado emitido para el usuario '{usuario}'.")
 
 
+    def verificar_certificado(self, cert_path, ac_raiz_cert_path):
+        with open(cert_path, "rb") as f:
+            cert = x509.load_pem_x509_certificate(f.read())
+        with open(ac_raiz_cert_path, "rb") as f:
+            ac_raiz_cert = x509.load_pem_x509_certificate(f.read())
+
+        try:
+            ac_raiz_cert.public_key().verify(
+                cert.signature, cert.tbs_certificate_bytes, cert.signature_hash_algorithm
+            )
+            print("El certificado es válido.")
+            return True
+        except Exception as e:
+            print(f"El certificado no es válido: {e}")
+            return False

@@ -1,25 +1,3 @@
 {
-    "jose": {
-        "password": "3915ed035d4fa94c8b67d11fa0e2cd9ade4eb8119bcb47a299f130ca90cec1cc",
-        "key": "1bf6356cc5270e67bca044d03d730ce93136f0c87b3568da214996caf5828fa7"
-    },
-    "David": {
-        "password": "67978e2233e92de5073e92937bb771ac39b3b4c7c94c47f025a3f60181076e5c",
-        "key": "60b39cd76967105fd5288381301787fd5fbd9d6e29ccb250ac784becf8207e35"
-    },
-    "davo": {
-        "password": "c2974c94875b450d54c07ad4f18439e0b99782b8ea84562775ecf940fd704a5b",
-        "key": "107ad34602bbf5d388ab1ace86ffcdf4e76b0a1240c932be70c84ae1bb859ade"
-    },
-    "david": {
-        "password": "891b7b0e2053454ca28acd88e90fb0f3818e8d791898a7127721970efbcab329",
-        "key": "8f568aa6538b18474db7385ecce9b87f4627514e51c61ae7aedb3eb17c62cfa5"
-    },
-    "davidP": {
-        "password": "e351c69d8113b4782a29a2bbe2866eef0e71ea91967cdde06fd76d020d1c2b45"
-    },
-    "alejandro": {
-        "password": "728b8644e32d833ddcd79d02f353999bb57fc34ea9e502cee750760e9a05469e",
-        "key": "61248cec8214efe89bc4b8442bfc0a929a6e2516b82b8dcdaa4bd4c0876430fa"
-    }
+
 }

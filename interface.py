@@ -113,7 +113,7 @@ class Interface:
         print("\n3 - GUARDAR ARCHIVOS MEDICOS ")
         print("\n4 - RECUPERAR ARCHIVOS MEDICOS")
         print("\n5 - BORRAR CUENTA")
-        print("\n6 - FIRMA DIGITAL")
+        print("\n6 - FIRMA DIGITAL Y CERTIFICADOS")
         print("\n7 - SALIR")
 
         # Input del usuario
@@ -184,19 +184,21 @@ class Interface:
         Interface.login_done(username)
 
     @staticmethod
-    @staticmethod
     def firma_digital_menu():
         """
         Menú para la funcionalidad de firma digital.
         """
         firma_digital = FirmaDigital()
+        firma_digital.inicializar_ac()
 
         while True:
             Interface.loading()
             print("\n1 - GENERAR CLAVES")
             print("2 - FIRMAR MENSAJE")
             print("3 - VERIFICAR FIRMA")
-            print("4 - VOLVER AL MENÚ PRINCIPAL")
+            print("4 - GENERAR CERTIFICADO DE USUARIO")
+            print("5 - VERIFICAR CERTIFICADO")
+            print("6 - VOLVER AL MENÚ PRINCIPAL")
             Interface.loading()
 
             opcion = input("\nSelecciona una opción: ")
@@ -218,7 +220,19 @@ class Interface:
                 firma_digital.verificar_firma(mensaje, firma_path, usuario)
 
             elif opcion == "4":
+                usuario = input("Introduce el nombre del usuario: ")
+                firma_digital.emitir_certificado_usuario(usuario)
+
+            elif opcion == "5":
+                cert_path = input("Ruta del certificado a verificar: ")
+                ac_raiz_cert_path = "certificados/AC1_cert.pem"
+                firma_digital.verificar_certificado(cert_path, ac_raiz_cert_path)
+
+            elif opcion == "6":
                 break
+
+
+
 
             else:
                 print("Opción no válida.")
