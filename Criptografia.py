@@ -110,7 +110,8 @@ class Criptadores:
     def hash_hmac_password(password, salt=os.urandom(8)):
 
         # Cifrando password con salt
-        h = hmac.HMAC(salt, hashes.SHA256())
+        h = hashes.Hash(hashes.SHA256(), backend=default_backend())
+        h.update(salt)
         h.update(str.encode(password))
         hash_pass = h.finalize()
 
