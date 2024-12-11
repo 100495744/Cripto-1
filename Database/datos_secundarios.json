@@ -1,3 +1,16 @@
 {
-
+    "ale": {
+        "fleje": [
+            "db7b69da15c8b469340ce94989",
+            "82ca814eacffcbb18cd043fdc5966127"
+        ],
+        "files": [
+            "Doc1.docx",
+            "Database1.accdb"
+        ],
+        "pistacho": [
+            "eeaba9fe70c5",
+            "8dc0ed8b0706672eb3ae2488d5cc985e"
+        ]
+    }
 }

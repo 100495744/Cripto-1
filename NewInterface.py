@@ -1,6 +1,7 @@
 from Database import DatabaseMethods
 from Criptografia import Criptadores
 from Criptografia import FirmaDigital
+from AutoridadCertificacion import Certificados
 from interface import Interface
 import os
 import tkinter as tk
@@ -14,6 +15,9 @@ SMALLFONT = ("Verdana", 15)
 
 database = DatabaseMethods()
 UsuarioActual = ""
+firma_digital = FirmaDigital()
+certificado = Certificados()
+style = ttk.Style()
 
 class tkinterApp(tk.Tk):
 
@@ -35,7 +39,7 @@ class tkinterApp(tk.Tk):
 
         # iterating through a tuple consisting
         # of the different page layouts
-        for F in (StartPage, Page1, Page2 , Page3, Page4):
+        for F in (StartPage, Page1, Page2, Page3, Page4, Page5):
             frame = F(container, self)
 
             # initializing frame of that object from
@@ -59,17 +63,17 @@ class tkinterApp(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        style = ttk.Style()
+
 
         # This will be adding style, and
         # naming that style variable as
         # W.Tbutton (TButton is used for ttk.Button).
         style.configure('W.TButton', font=
-        ('calibri', 10, 'bold', 'underline'),
-                        foreground='red')
+        ('calibri', 15, 'bold', 'underline'),
+                        foreground='black')
 
         # label of frame Layout 2
-        label = ttk.Label(self, text="Bien Benido a tu Sanitario", font=LARGEFONT)
+        label = ttk.Label(self, text="Bienvenido a tu Sanitario", font=LARGEFONT)
         # putting the grid in its place by using
         # grid
 
@@ -96,14 +100,14 @@ class StartPage(tk.Frame):
 
         ## button to show frame 2 with text layout2
         button2 = ttk.Button(self, text="Inicio de Sesión",
-                             command=lambda: controller.show_frame(Page2))
+                             command=lambda: controller.show_frame(Page2), style = "W.TButton" )
 
         # putting the button in its place by
         # using grid
         button2.place ( x = offset , y = 200)
 
         button3 = ttk.Button(self, text="Salir",
-                             command=lambda: controller.destroy())
+                             command=lambda: controller.destroy(), style = "W.TButton" )
 
         # putting the button in its place by
         # using grid
@@ -217,36 +221,46 @@ class Page2(tk.Frame):
                     UsuarioActual = entry_usuario.get()
                     controller.show_frame(Page3)
 
+                    firma_digital.generar_claves(usuario)
+                    firma_digital.serializar_claves(usuario)
+
 
                 else:
                     messagebox.showwarning(tittle=None, message="Contraseña es incorrecta")
 
+
+#Window Usuario
 class Page3(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+
+        style.configure('W.TButton', font=
+        ('calibri', 15, 'bold', 'underline'),
+                        foreground='black')
+
         label = ttk.Label(self, text="Bienvenido", font=LARGEFONT)
         label_data = ttk.Label(self, text ="", font =SMALLFONT )
-        button_Añadir= ttk.Button(self, text="AÑADIR DATOS DE SEGURO A TU CUENTA", command=
+        button_Añadir= ttk.Button(self, text="AÑADIR DATOS DE SEGURO A TU CUENTA",style = "W.TButton", command=
                                   lambda: controller.show_frame(Page4))
-        button_ver= ttk.Button(self, text="VER DATOS DEL SEGURO" , command= lambda : printdata())
+        button_ver= ttk.Button(self, text="VER DATOS DEL SEGURO" ,style = "W.TButton", command= lambda : printdata())
         button_guardar = ttk.Button(self, text="GUARDAR ARCHIVO MEDICO",
                                     command=lambda: introducirarhivos())
-        button_recuperar = ttk.Button(self, text="RECUPERAR ARCHIVOS MEDICOS" ,
+        button_recuperar = ttk.Button(self, text="RECUPERAR ARCHIVOS MEDICOS" , style = "W.TButton",
                                       command =lambda : recuperarArchivos())
 
-        button_borrar = ttk.Button(self, text="BORRAR CUENTA", command= lambda: borrarCuenta())
-        button_firma = ttk.Button(self, text="FIRMA DIGITAL")
-        button_salir = ttk.Button(self, text="SALIR",
+        button_borrar = ttk.Button(self, text="BORRAR CUENTA", style = "W.TButton", command= lambda: borrarCuenta())
+        button_firma = ttk.Button(self, text="FIRMA DIGITAL" ,style = "W.TButton", command= lambda :controller.show_frame(Page5))
+        button_salir = ttk.Button(self, text="SALIR", style = "W.TButton",
                                   command= lambda : controller.show_frame(StartPage) + DatabaseMethods.borrar_key(UsuarioActual, "Database/datos_principales.json"))
 
         label.grid(row=0, column=2, padx=10, pady=10)
-        button_Añadir.grid(row=1, column=1, padx=10, pady=10)
-        button_ver.grid(row=3, column=1, padx=10, pady=10)
-        button_guardar.grid(row=4,column=1, padx=10, pady= 10)
-        button_recuperar.grid(row=5, column=1, pady=10)
-        button_borrar.grid(row=6, column=1, pady=10)
-        button_firma.grid(row=7, column=1, pady=10)
-        button_salir.grid(row=8, column=1, pady=10)
+        button_Añadir.grid(row=1, column=1, padx=15, pady=15)
+        button_ver.grid(row=3, column=1, padx=15, pady=15)
+        button_guardar.grid(row=4, column=1, padx=15, pady=15)
+        button_recuperar.grid(row=5, column=1, pady=15)
+        button_borrar.grid(row=6, column=1, pady=15)
+        button_firma.grid(row=7, column=1, pady=15)
+        button_salir.grid(row=8, column=1, pady=15)
 
         def printdata ():
             texto = Interface.print_data(UsuarioActual)
@@ -314,8 +328,52 @@ class Page4(tk.Frame):
         button1.grid(row=5, column=2)
         button2.grid(row=6, column=2)
 
+class Page5(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+
+        label = ttk.Label(self, text="Firma Digital", font=LARGEFONT)
+        label_generar = ttk.Label(self, text="Generar Claves", font=SMALLFONT)
+        label_firmar = ttk.Label(self, text="Firmar Mensajes", font=SMALLFONT)
+        label_verificar = ttk.Label(self, text="Verificar Firma", font=SMALLFONT)
+        label_certificado = ttk.Label(self, text="Verificar Certificado", font=SMALLFONT)
+        label_volver = ttk.Label(self, text="Volver menu principal", font=SMALLFONT)
+
+        entry_mensaje = ttk.Entry(self)
+        button5 = ttk.Button(self, text="CANCELAR",
+                             command=lambda: controller.show_frame(Page3))
+        button2 = ttk.Button(self, text="Firmar",
+                             command=lambda: FirmarMensaje())
+
+        button4 = ttk.Button(self, text="Verificar",
+                             command=lambda: VerificarCertificado())
+
+        label.grid(row=0, column=4, padx=10, pady=10)
+        label_verificar.grid(row=2, column=0, padx=10, pady=10)
+        label_firmar.grid(row=3, column=0, padx=10, pady=10)
+        button5.grid(row=4,column=0,padx=10,pady=10)
+        button2.grid(row=3,column=1,padx=10,pady=10)
+        button4.grid(row=2,column=1,padx=10,pady=10)
+        entry_mensaje.grid(row=4, column=4, padx=200, pady=200)
+
+
+
+        def FirmarMensaje():
+            if not entry_mensaje.get() :
+                messagebox.showwarning(tittle=None, message="No has añadido ningun mensaje")
+            else:
+                firma_digital.firmar_mensaje(entry_mensaje.get(), UsuarioActual)
+
+        def VerificarCertificado():
+            cert = certificado.solicitar_certificado(UsuarioActual)
+            if certificado.verificar_certificado(cert):
+                messagebox.showwarning(tittle=None, message="Tu Certificado es valido")
+            else:
+                messagebox.showwarning(tittle=None, message="Tu Certificado no es valido")
+
 
 # Driver Code
 
-app = tkinterApp()
-app.mainloop()
+#app = tkinterApp()
+#app.mainloop()

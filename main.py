@@ -1,10 +1,12 @@
 from interface import Interface
+from NewInterface import tkinterApp
 
 
 # Clase Main del programa
 class Main:
     # Ejecutando estado inicial del programa
-    Interface.inicial()
+    app = tkinterApp()
+    app.mainloop()
 
 
 if __name__ == '__main__':

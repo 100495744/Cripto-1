@@ -232,7 +232,8 @@ class DatabaseMethods:
         with open(f"llave_priv/{usuario}_private_key.pem", "rb") as f:
             private_key = serialization.load_pem_private_key(
                 f.read(),
-                backend=default_backend()
+                backend=default_backend(),
+                password= None
             )
             f.close()
         return private_key
