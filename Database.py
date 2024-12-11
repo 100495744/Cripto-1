@@ -232,7 +232,6 @@ class DatabaseMethods:
         with open(f"llave_priv/{usuario}_private_key.pem", "rb") as f:
             private_key = serialization.load_pem_private_key(
                 f.read(),
-                password=bytes(contraseña, "utf-8"),
                 backend=default_backend()
             )
             f.close()
@@ -253,6 +252,7 @@ class DatabaseMethods:
     # Guardar certificado
     @staticmethod
     def guardar_certificado(usuario, certificado):
+        os.makedirs("certificados", exist_ok=True)
         with open(f"certificados/{usuario}_public_key.pem", "wb") as f:
             f.write(certificado)
             f.close()
